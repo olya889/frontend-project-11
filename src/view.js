@@ -19,7 +19,7 @@ export default (elements, i18n, state) => {
         feedsBody.classList.add('card', 'border-0');
         const feedsTitleDiv = document.createElement('div');
         const feedsTitle = document.createElement('h2');
-        feedsTitle.textContent = 'Фиды';
+        feedsTitle.textContent = i18n.t('feedsTitle');
         feedsTitleDiv.classList.add('card-body');
         feedsTitle.classList.add('card-title', 'h4');
         feedsTitleDiv.append(feedsTitle);
@@ -51,7 +51,7 @@ export default (elements, i18n, state) => {
         postsBody.classList.add('card', 'border-0');
         const postsTitleDiv = document.createElement('div');
         const postsTitle = document.createElement('h2');
-        postsTitle.textContent = 'Посты';
+        postsTitle.textContent = i18n.t('postsTitle');
         postsTitleDiv.classList.add('card-body');
         postsTitle.classList.add('card-title', 'h4');
         postsTitleDiv.append(postsTitle);
@@ -76,7 +76,7 @@ export default (elements, i18n, state) => {
           postButton.setAttribute('data-id', '208');
           postButton.setAttribute('data-bs-toggle', 'modal');
           postButton.setAttribute('data-bs-target', '#modal');
-          postButton.textContent = 'Просмотр';
+          postButton.textContent = i18n.t('openLinkButton');
           postItem.append(postLink);
           postItem.append(postButton);
           postsUL.append(postItem);
