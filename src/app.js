@@ -1,6 +1,7 @@
 import i18next from 'i18next';
 //import { runtime } from 'webpack';
-import ru from './locales/ru.js'
+//import ru from './locales/ru.js'
+import resources from './locales/index.js'
 import { string, setLocale } from 'yup';
 import watch from './view.js';
 
@@ -28,12 +29,9 @@ export default () => {
   i18nextInstance.init({
     lng: 'ru',
     debug: true,
-    resourses: {
-      ru,
-    }
+    resources
   })
   .then(() => {
-  console.log(i18nextInstance.t('author'));
 
   const watchedState = watch(elements, i18nextInstance, state);
 
@@ -47,7 +45,7 @@ export default () => {
         watchedState.rssList.push(url);
         watchedState.postsList.push(url);
       } else {
-        watchedState.error = 'RSS уже существует';
+        watchedState.error = i18nextInstance.t('errors.notUnique');
         // watchedState.error = errors.notUnique;
       }
     })
@@ -57,18 +55,3 @@ export default () => {
   });
 });
 };
-/*    const watchedState = onChange(state, (path, value) => {
-        switch (path) {
-            case 'error': renderError(feedbackElement, inputElement, watchedState, i18nInstance);
-            break;
-
-            case 'rssList': renderRSS(form, postsContainer, feedsContainer, inputElement, watchedState, i18nInstance);
-            break;
-
-            case 'postsList': renderPosts(postsContainer, value, watchedState, i18nInstance);
-            break;
-
-            default:
-                break;
-        }
-    }); */
