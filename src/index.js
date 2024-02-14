@@ -1,5 +1,5 @@
 import './styles.scss';
 import 'bootstrap';
-import validator from './validator.js';
+import app from './app.js';
 
-validator();
+app();
