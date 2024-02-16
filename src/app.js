@@ -17,14 +17,9 @@ export default () => {
     postsList: [],
     error: '',
   };
-  setLocale({
-    mixed: {
-      matches: () => ({ key: 'errors.notValidUrl' }),
-      notOneOf: () => ({ key: 'errors.notUnique' }),
-    },
-  });
-  const userSchema = string().url().matches(/[^\s]/).notOneOf(state.postsList);
 
+ // const userSchema = string().url().matches(/[^\s]/).notOneOf(state.postsList);
+  const userSchema = string().url().required();
   const i18nextInstance = i18next.createInstance();
   i18nextInstance.init({
     lng: 'ru',
@@ -32,6 +27,16 @@ export default () => {
     resources,
   })
     .then(() => {
+      setLocale({
+        string: {
+          url: () => ({ key: 'errors.notValidUrl' }),
+        // mixed: {
+        //    required: () => ({ key: 'errors.notUnique' }),
+        //  matches: () => ({ key: 'errors.notValidUrl' }),
+        //  notOneOf: () => ({ key: 'errors.notUnique' }),
+        // url: () => ({ key: 'errors.notValidUrl' }),
+        },
+    });
       const watchedState = watch(elements, i18nextInstance, state);
 
       elements.form.addEventListener('submit', (e) => {
@@ -40,15 +45,16 @@ export default () => {
         const rss = formData.get('url').trim();
         userSchema.validate(rss)
           .then((url) => {
-            if (!watchedState.rssList.includes(url)) {
+            //if (!watchedState.rssList.includes(url)) {
               watchedState.rssList.push(url);
               watchedState.postsList.push(url);
-            } else {
-              watchedState.error = 'errors.notUnique';
-            }
+            //} else {
+             // watchedState.error = 'errors.notUnique';
+            //}
           })
           .catch((err) => {
-            watchedState.error = 'errors.notValidUrl';
+            console.log(err.message);
+            watchedState.error = '???';
           });
       });
     });
