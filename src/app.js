@@ -18,8 +18,11 @@ export default () => {
     error: '',
   };
 
- // const userSchema = string().url().matches(/[^\s]/).notOneOf(state.postsList);
-  const userSchema = string().url().required();
+  const validateRss = (rss, links) => {
+    const schema = string().url().notOneOf(links).matches(/[^\s]/);
+    return schema.validate(rss);
+  };
+
   const i18nextInstance = i18next.createInstance();
   i18nextInstance.init({
     lng: 'ru',
@@ -27,34 +30,26 @@ export default () => {
     resources,
   })
     .then(() => {
+      const watchedState = watch(elements, i18nextInstance, state);
       setLocale({
         string: {
-          url: () => ({ key: 'errors.notValidUrl' }),
-        // mixed: {
-        //    required: () => ({ key: 'errors.notUnique' }),
-        //  matches: () => ({ key: 'errors.notValidUrl' }),
-        //  notOneOf: () => ({ key: 'errors.notUnique' }),
-        // url: () => ({ key: 'errors.notValidUrl' }),
+          url: () => ({ key: 'errors.url' }),
+          notOneOf: () => ({ key: 'errors.notOneOf' }),
+          matches: () => ({ key: 'errors.matches' }),
         },
-    });
-      const watchedState = watch(elements, i18nextInstance, state);
+      });
 
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const rss = formData.get('url').trim();
-        userSchema.validate(rss)
+        validateRss(rss, watchedState.rssList)
           .then((url) => {
-            //if (!watchedState.rssList.includes(url)) {
-              watchedState.rssList.push(url);
-              watchedState.postsList.push(url);
-            //} else {
-             // watchedState.error = 'errors.notUnique';
-            //}
+            watchedState.rssList.push(url);
+            watchedState.postsList.push(url);
           })
           .catch((err) => {
-            console.log(err.message);
-            watchedState.error = '???';
+            watchedState.error = err.type;
           });
       });
     });
