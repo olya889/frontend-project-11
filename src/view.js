@@ -7,7 +7,7 @@ export default (elements, i18n, state) => {
   const watchedState = onChange(state, (path, value) => {
     switch (path) {
       case 'error':
-        feedbackElement.textContent = i18n.t(value);
+        feedbackElement.textContent = i18n.t(`errors.${value}`);
         feedbackElement.classList.remove('text-success');
         feedbackElement.classList.add('text-danger');
         inputElement.classList.add('is-invalid');
