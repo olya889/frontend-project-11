@@ -1,7 +1,9 @@
 import i18next from 'i18next';
+import axios from 'axios';
 import { string, setLocale } from 'yup';
 import resources from './locales/index.js';
 import watch from './view.js';
+import parse from './parser.js';
 
 export default () => {
   const elements = {
@@ -13,12 +15,16 @@ export default () => {
   };
 
   const state = {
-    rssList: [],
-    postsList: [],
+    feeds: [],
+    posts: [],
     error: '',
   };
 
-  const validateRss = (rss, links) => {
+  const validateRss = (rss, watchedState) => {
+    const links = watchedState.feeds.map((feed) => {
+      const { url } = feed;
+      return url;
+    });
     const schema = string().url().notOneOf(links).matches(/[^\s]/);
     return schema.validate(rss);
   };
@@ -34,8 +40,12 @@ export default () => {
       setLocale({
         string: {
           url: () => ({ key: 'errors.url' }),
-          notOneOf: () => ({ key: 'errors.notOneOf' }),
           matches: () => ({ key: 'errors.matches' }),
+        },
+        mixed: {
+          notOneOf: () => ({ key: 'errors.notOneOf' }),
+          parsingError: () => ({ key: 'errors.hasNotRss' }),
+          networkError: () => ({ key: 'errors.networkError' }),
         },
       });
 
@@ -43,13 +53,25 @@ export default () => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const rss = formData.get('url').trim();
-        validateRss(rss, watchedState.rssList)
-          .then((url) => {
-            watchedState.rssList.push(url);
-            watchedState.postsList.push(url);
+        validateRss(rss, watchedState)
+          .then((validRss) => new URL(`https://allorigins.hexlet.app/get?disableCache=true&url=${validRss}`))
+          .then((url) => axios.get(url))
+          .then((response) => {
+            const { feed, posts } = parse(rss, response);
+            watchedState.feeds.push(feed);
+            watchedState.posts.push(...posts);
           })
           .catch((err) => {
-            watchedState.error = err.type;
+            // console.log(JSON.stringify(err));
+            // console.log(err.message);
+            if (err.name === 'ValidationError') {
+              watchedState.error = err.message.key;
+              // console.log(watchedState.error);
+            } else {
+              // console.log(err.message);
+              watchedState.error = `errors.${err.name}`;
+              // console.log(watchedState.error);
+            }
           });
       });
     });
