@@ -8,6 +8,8 @@ export default {
       notOneOf: 'RSS уже существует',
       url: 'Ссылка должна быть валидным URL',
       matches: 'Ссылка должна быть валидным URL',
+      parsingError: 'Ресурс не содержит валидный RSS',
+      AxiosError: 'Ошибка сети',
     },
   },
 };
