@@ -7,13 +7,15 @@ export default (elements, i18n, state) => {
   const watchedState = onChange(state, (path, value) => {
     switch (path) {
       case 'error':
-        feedbackElement.textContent = i18n.t(`errors.${value}`);
+        // feedbackElement.textContent = i18n.t(`errors.${value}`);
+        // console.log(value);
+        feedbackElement.textContent = i18n.t(value);
         feedbackElement.classList.remove('text-success');
         feedbackElement.classList.add('text-danger');
         inputElement.classList.add('is-invalid');
         break;
 
-      case 'rssList': {
+      case 'feeds': {
         postsContainer.replaceChildren();
         feedsContainer.replaceChildren();
         inputElement.classList.remove('is-invalid');
@@ -29,15 +31,18 @@ export default (elements, i18n, state) => {
         feedsUL.classList.add('list-group', 'border-0', 'rounded-0');
         feedsBody.append(feedsTitleDiv, feedsUL);
         feedsContainer.append(feedsBody);
+        // console.log(value);
         value.forEach((element) => {
+          // console.log(element);
+          const { title, description } = element;
           const feedItem = document.createElement('li');
           feedItem.classList.add('list-group-item', 'border-0', 'border-end-0');
           const feedItemTitle = document.createElement('h3');
           feedItemTitle.classList.add('h6', 'm-0');
-          feedItemTitle.textContent = 'I am feed title';
+          feedItemTitle.textContent = title;
           const feedItemBody = document.createElement('p');
           feedItemBody.classList.add('m-0', 'small', 'text-black-50');
-          feedItemBody.textContent = element;
+          feedItemBody.textContent = description;
           feedItem.append(feedItemTitle, feedItemBody);
           feedsUL.append(feedItem);
         });
@@ -48,7 +53,8 @@ export default (elements, i18n, state) => {
         feedbackElement.textContent = 'RSS успешно загружен';
         break;
       }
-      case 'postsList': {
+
+      case 'posts': {
         const postsBody = document.createElement('div');
         postsBody.classList.add('card', 'border-0');
         const postsTitleDiv = document.createElement('div');
@@ -62,16 +68,17 @@ export default (elements, i18n, state) => {
         postsBody.append(postsTitleDiv, postsUL);
         postsContainer.append(postsBody);
         value.forEach((element) => {
+          const { title, link } = element;
           const postItem = document.createElement('li');
           postItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
           const postLink = document.createElement('a');
-          postLink.setAttribute('href', element);
+          postLink.setAttribute('href', link);
           postLink.classList.add('fw-bold');
           postLink.setAttribute('data-id', 207);
           postLink.setAttribute('target', '_blank');
           postLink.setAttribute('rel', 'noopener');
           postLink.setAttribute('rel', 'noreferrer');
-          postLink.textContent = element;
+          postLink.textContent = title;
           const postButton = document.createElement('button');
           postButton.classList.add('btn', 'btn-outline-primary', 'btn-sm');
           postButton.setAttribute('type', 'button');
@@ -87,7 +94,7 @@ export default (elements, i18n, state) => {
       }
 
       default:
-        break;
+        throw new Error(`Unknown path ${path}!`);
     }
   });
   return watchedState;
