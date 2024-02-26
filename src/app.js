@@ -20,13 +20,15 @@ export default () => {
     error: '',
   };
 
-  const validateRss = (rss, watchedState) => {
+  const validateRss = (url, watchedState) => {
     const links = watchedState.feeds.map((feed) => {
-      const { url } = feed;
-      return url;
+      const { rss } = feed;
+      console.log(feed);
+      return rss;
     });
+    console.log(links);
     const schema = string().url().notOneOf(links).matches(/[^\s]/);
-    return schema.validate(rss);
+    return schema.validate(url);
   };
 
   const i18nextInstance = i18next.createInstance();
@@ -63,7 +65,7 @@ export default () => {
           })
           .catch((err) => {
             // console.log(JSON.stringify(err));
-            // console.log(err.message);
+            console.log(JSON.stringify(err));
             if (err.name === 'ValidationError') {
               watchedState.error = err.message.key;
               // console.log(watchedState.error);
