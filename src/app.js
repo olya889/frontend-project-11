@@ -23,10 +23,10 @@ export default () => {
   const validateRss = (url, watchedState) => {
     const links = watchedState.feeds.map((feed) => {
       const { rss } = feed;
-      console.log(feed);
+      // console.log(feed);
       return rss;
     });
-    console.log(links);
+    // console.log(links);
     const schema = string().url().notOneOf(links).matches(/[^\s]/);
     return schema.validate(url);
   };
@@ -65,7 +65,6 @@ export default () => {
           })
           .catch((err) => {
             // console.log(JSON.stringify(err));
-            console.log(JSON.stringify(err));
             if (err.name === 'ValidationError') {
               watchedState.error = err.message.key;
               // console.log(watchedState.error);
