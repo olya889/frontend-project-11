@@ -5,6 +5,7 @@ export default (elements, i18n, state) => {
     form, feedbackElement, postsContainer, feedsContainer, inputElement,
   } = elements;
   const watchedState = onChange(state, (path, value) => {
+    // console.log(path, value);
     switch (path) {
       case 'error':
         // feedbackElement.textContent = i18n.t(`errors.${value}`);
@@ -55,6 +56,8 @@ export default (elements, i18n, state) => {
       }
 
       case 'posts': {
+        // console.log('value:', value, value.length);
+        postsContainer.replaceChildren();
         const postsBody = document.createElement('div');
         postsBody.classList.add('card', 'border-0');
         const postsTitleDiv = document.createElement('div');
