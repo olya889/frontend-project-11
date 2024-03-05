@@ -19,6 +19,9 @@ export default () => {
     feeds: [],
     posts: [],
     error: '',
+    uiState: {
+      posts: [],
+    },
   };
 
   const validateRss = (url, watchedState) => {
@@ -40,13 +43,9 @@ export default () => {
           const xmlString = response.data.contents;
           const responseData = parser.parseFromString(xmlString, 'text/xml');
           const channel = responseData.querySelector('channel');
-          // const items = channel.querySelectorAll('item');
           const newPosts = [];
           const currentChannelPosts = watchedState.posts.filter((post) => post.feedId === id);
-          // console.log('CUR:', currentChannelPosts);
           const lastPubDate = currentChannelPosts[0].postPubDate;
-          // const firstItem = channel.querySelector('item');
-          // const date = new Date(firstItem.querySelector('pubDate').textContent);
           channel.querySelectorAll('item').forEach((item) => {
             const postTitle = (item.querySelector('title').textContent);
             const postLink = item.querySelector('link').textContent;
@@ -64,10 +63,8 @@ export default () => {
               newPosts.push(post);
             }
           });
-          // console.log('Newposts:', newPosts);
           watchedState.posts.unshift(...newPosts);
         });
-      //  .catch((err) => {console.log(err)})
     });
     setTimeout(() => checkNewPosts(watchedState), 5000);
   };
@@ -100,7 +97,6 @@ export default () => {
           .then((validRss) => new URL(`https://allorigins.hexlet.app/get?disableCache=true&url=${validRss}`))
           .then((url) => axios.get(url))
           .then((response) => {
-            // console.log(response);
             const { feed, posts } = parse(rss, response);
             watchedState.feeds.unshift(feed);
             watchedState.posts.unshift(...posts);
@@ -109,14 +105,22 @@ export default () => {
           .catch((err) => {
             if (err.name === 'ValidationError') {
               watchedState.error = err.message.key;
-              // console.log(watchedState.error);
             } else {
-              // console.log(err.message);
               watchedState.error = `errors.${err.name}`;
-              // console.log(watchedState.error);
             }
           });
-        // checkNewPosts(watchedState);
+      });
+
+      elements.postsContainer.addEventListener('click', (e) => {
+        const modalTitle = document.querySelector('.modal-title');
+        const modalBody = document.querySelector('.modal-body');
+        const readFullButton = document.querySelector('a.full-article');
+        const targetID = e.target.getAttribute('data-id');
+        const targetPost = state.posts.find((post) => post.id === targetID);
+        modalTitle.textContent = targetPost.title;
+        modalBody.textContent = targetPost.description;
+        readFullButton.setAttribute('href', targetPost.link);
+        watchedState.uiState.posts.push({ id: targetID });
       });
     });
 };
