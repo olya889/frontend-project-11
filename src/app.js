@@ -69,6 +69,13 @@ export default () => {
     setTimeout(() => checkNewPosts(watchedState), 5000);
   };
 
+  const getUrlWithProxy = (url) => {
+    const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app/');
+    urlWithProxy.searchParams.set('disableCache', 'true');
+    urlWithProxy.searchParams.set('url', url);
+    return urlWithProxy.toString();
+  };
+
   const i18nextInstance = i18next.createInstance();
   i18nextInstance.init({
     lng: 'ru',
@@ -94,7 +101,7 @@ export default () => {
         const formData = new FormData(e.target);
         const rss = formData.get('url').trim();
         validateRss(rss, watchedState)
-          .then((validRss) => new URL(`https://allorigins.hexlet.app/get?disableCache=true&url=${validRss}`))
+          .then((validRss) => getUrlWithProxy(validRss))
           .then((url) => axios.get(url))
           .then((response) => {
             const { feed, posts } = parse(rss, response);
