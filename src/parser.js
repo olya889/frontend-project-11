@@ -6,16 +6,12 @@ export default (rss, response) => {
   const xmlString = response.data.contents;
   const responseData = parser.parseFromString(xmlString, 'text/xml');
 
-  // console.log(responseData.querySelector('parsererror').textContent);
   if (responseData.querySelector('parsererror')) {
     const err = new Error();
     err.name = 'parsingError';
     throw err;
   } else {
     const channel = responseData.querySelector('channel');
-    // console.log('channel:', channel);
-    // const lastBuildDate = new Date(channel.querySelector('lastBuildDate').textContent);
-    // console.log('lastBuildDate', lastBuildDate);
     const channelTitle = channel.querySelector('title').textContent;
     const channelDescription = channel.querySelector('description').textContent;
     const id = uniqueId();
