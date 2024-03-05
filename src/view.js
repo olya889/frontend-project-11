@@ -5,11 +5,9 @@ export default (elements, i18n, state) => {
     form, feedbackElement, postsContainer, feedsContainer, inputElement,
   } = elements;
   const watchedState = onChange(state, (path, value) => {
-    // console.log(path, value);
+    const previewedPosts = state.uiState.posts.map((post) => post.id);
     switch (path) {
       case 'error':
-        // feedbackElement.textContent = i18n.t(`errors.${value}`);
-        // console.log(value);
         feedbackElement.textContent = i18n.t(value);
         feedbackElement.classList.remove('text-success');
         feedbackElement.classList.add('text-danger');
@@ -32,9 +30,7 @@ export default (elements, i18n, state) => {
         feedsUL.classList.add('list-group', 'border-0', 'rounded-0');
         feedsBody.append(feedsTitleDiv, feedsUL);
         feedsContainer.append(feedsBody);
-        // console.log(value);
         value.forEach((element) => {
-          // console.log(element);
           const { title, description } = element;
           const feedItem = document.createElement('li');
           feedItem.classList.add('list-group-item', 'border-0', 'border-end-0');
@@ -56,7 +52,6 @@ export default (elements, i18n, state) => {
       }
 
       case 'posts': {
-        // console.log('value:', value, value.length);
         postsContainer.replaceChildren();
         const postsBody = document.createElement('div');
         postsBody.classList.add('card', 'border-0');
@@ -71,13 +66,15 @@ export default (elements, i18n, state) => {
         postsBody.append(postsTitleDiv, postsUL);
         postsContainer.append(postsBody);
         value.forEach((element) => {
-          const { title, link } = element;
+          const { id, title, link } = element;
           const postItem = document.createElement('li');
           postItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
           const postLink = document.createElement('a');
           postLink.setAttribute('href', link);
-          postLink.classList.add('fw-bold');
-          postLink.setAttribute('data-id', 207);
+          if (!previewedPosts.includes(id)) {
+            postLink.classList.add('fw-bold');
+          }
+          postLink.setAttribute('data-id', id);
           postLink.setAttribute('target', '_blank');
           postLink.setAttribute('rel', 'noopener');
           postLink.setAttribute('rel', 'noreferrer');
@@ -85,13 +82,22 @@ export default (elements, i18n, state) => {
           const postButton = document.createElement('button');
           postButton.classList.add('btn', 'btn-outline-primary', 'btn-sm');
           postButton.setAttribute('type', 'button');
-          postButton.setAttribute('data-id', '208');
+          postButton.setAttribute('data-id', id);
           postButton.setAttribute('data-bs-toggle', 'modal');
           postButton.setAttribute('data-bs-target', '#modal');
           postButton.textContent = i18n.t('openLinkButton');
           postItem.append(postLink);
           postItem.append(postButton);
           postsUL.append(postItem);
+        });
+        break;
+      }
+
+      case 'uiState.posts': {
+        value.forEach(({ id }) => {
+          const postElement = document.querySelector(`a[data-id="${id}"]`);
+          postElement.classList.add('fw-normal');
+          postElement.classList.remove('fw-bold');
         });
         break;
       }
