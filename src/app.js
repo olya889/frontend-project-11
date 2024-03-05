@@ -32,11 +32,17 @@ export default () => {
     const schema = string().url().notOneOf(links).matches(/[^\s]/);
     return schema.validate(url);
   };
+  const getUrlWithProxy = (url) => {
+    const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app/');
+    urlWithProxy.searchParams.set('disableCache', 'true');
+    urlWithProxy.searchParams.set('url', url);
+    return urlWithProxy.toString();
+  };
 
   const checkNewPosts = (watchedState) => {
     watchedState.feeds.forEach((feed) => {
       const { rss, id } = feed;
-      const url = new URL(`https://allorigins.hexlet.app/get?disableCache=true&url=${rss}`);
+      const url = getUrlWithProxy(rss);
       axios.get(url)
         .then((response) => {
           const parser = new DOMParser();
@@ -67,13 +73,6 @@ export default () => {
         });
     });
     setTimeout(() => checkNewPosts(watchedState), 5000);
-  };
-
-  const getUrlWithProxy = (url) => {
-    const urlWithProxy = new URL('/get', 'https://allorigins.hexlet.app/');
-    urlWithProxy.searchParams.set('disableCache', 'true');
-    urlWithProxy.searchParams.set('url', url);
-    return urlWithProxy.toString();
   };
 
   const i18nextInstance = i18next.createInstance();
