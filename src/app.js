@@ -109,9 +109,24 @@ export default () => {
             const { feed, posts } = parse(rss, response);
             watchedState.feeds.unshift(feed);
             watchedState.posts.unshift(...posts);
+
+            elements.postsContainer.addEventListener('click', (event) => {
+              if (event.target.tagName === 'A' || event.target.tagName === 'BUTTON') {
+                const modalTitle = document.querySelector('.modal-title');
+                const modalBody = document.querySelector('.modal-body');
+                const readFullButton = document.querySelector('a.full-article');
+                const targetID = event.target.getAttribute('data-id');
+                const targetPost = state.posts.find((post) => post.id === targetID);
+                modalTitle.textContent = targetPost.title;
+                modalBody.textContent = targetPost.description;
+                readFullButton.setAttribute('href', targetPost.link);
+                watchedState.uiState.posts.push({ id: targetID });
+              }
+            });
             checkNewPosts(watchedState);
           })
           .catch((err) => {
+            watchedState.error = '';
             watchedState.formState = 'processing';
             if (err.name === 'ValidationError') {
               watchedState.error = err.message.key;
@@ -119,18 +134,6 @@ export default () => {
               watchedState.error = `errors.${err.name}`;
             }
           });
-      });
-
-      elements.postsContainer.addEventListener('click', (e) => {
-        const modalTitle = document.querySelector('.modal-title');
-        const modalBody = document.querySelector('.modal-body');
-        const readFullButton = document.querySelector('a.full-article');
-        const targetID = e.target.getAttribute('data-id');
-        const targetPost = state.posts.find((post) => post.id === targetID);
-        modalTitle.textContent = targetPost.title;
-        modalBody.textContent = targetPost.description;
-        readFullButton.setAttribute('href', targetPost.link);
-        watchedState.uiState.posts.push({ id: targetID });
       });
     });
 };
