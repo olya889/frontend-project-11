@@ -4,6 +4,8 @@ export default (elements, i18n, state) => {
   const {
     form, feedbackElement, postsContainer, feedsContainer, inputElement,
   } = elements;
+  console.log(state);
+  const submitButton = document.querySelector('button[type="submit"]');
   const watchedState = onChange(state, (path, value) => {
     const previewedPosts = state.uiState.posts.map((post) => post.id);
     switch (path) {
@@ -43,11 +45,9 @@ export default (elements, i18n, state) => {
           feedItem.append(feedItemTitle, feedItemBody);
           feedsUL.append(feedItem);
         });
-        form.reset();
-        inputElement.focus();
         feedbackElement.classList.remove('text-danger');
         feedbackElement.classList.add('text-success');
-        feedbackElement.textContent = 'RSS успешно загружен';
+        feedbackElement.textContent = i18n.t('successFeedback');
         break;
       }
 
@@ -101,6 +101,20 @@ export default (elements, i18n, state) => {
         });
         break;
       }
+
+      case 'formState': {
+        if (value === 'waiting response') {
+          submitButton.disabled = true;
+        } else if (value === 'processing') {
+          submitButton.disabled = false;
+          form.reset();
+          inputElement.focus();
+        } else if (value === 'initial') {
+          form.reset();
+        }
+
+        break;
+      };
 
       default:
         throw new Error(`Unknown path ${path}!`);
