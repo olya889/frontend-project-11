@@ -120,11 +120,8 @@ export default () => {
             }
           });
       });
-      //elements.postsContainer.querySelector('ul')
 
       elements.postsContainer.addEventListener('click', (e) => {
-        console.log(elements.postsContainer.querySelector('ul'));
-        console.log(e.target);
         const modalTitle = document.querySelector('.modal-title');
         const modalBody = document.querySelector('.modal-body');
         const readFullButton = document.querySelector('a.full-article');

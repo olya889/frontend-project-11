@@ -4,7 +4,6 @@ export default (elements, i18n, state) => {
   const {
     form, feedbackElement, postsContainer, feedsContainer, inputElement,
   } = elements;
-  console.log(state);
   const submitButton = document.querySelector('button[type="submit"]');
   const watchedState = onChange(state, (path, value) => {
     const previewedPosts = state.uiState.posts.map((post) => post.id);
@@ -112,9 +111,8 @@ export default (elements, i18n, state) => {
         } else if (value === 'initial') {
           form.reset();
         }
-
         break;
-      };
+      }
 
       default:
         throw new Error(`Unknown path ${path}!`);
