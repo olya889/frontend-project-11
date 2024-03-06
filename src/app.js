@@ -22,6 +22,7 @@ export default () => {
     uiState: {
       posts: [],
     },
+    formState: 'initial',
   };
 
   const validateRss = (url, watchedState) => {
@@ -97,18 +98,21 @@ export default () => {
 
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
+        watchedState.formState = 'waiting response';
         const formData = new FormData(e.target);
         const rss = formData.get('url').trim();
         validateRss(rss, watchedState)
           .then((validRss) => getUrlWithProxy(validRss))
           .then((url) => axios.get(url))
           .then((response) => {
+            watchedState.formState = 'processing';
             const { feed, posts } = parse(rss, response);
             watchedState.feeds.unshift(feed);
             watchedState.posts.unshift(...posts);
             checkNewPosts(watchedState);
           })
           .catch((err) => {
+            watchedState.formState = 'processing';
             if (err.name === 'ValidationError') {
               watchedState.error = err.message.key;
             } else {
@@ -116,8 +120,11 @@ export default () => {
             }
           });
       });
+      //elements.postsContainer.querySelector('ul')
 
       elements.postsContainer.addEventListener('click', (e) => {
+        console.log(elements.postsContainer.querySelector('ul'));
+        console.log(e.target);
         const modalTitle = document.querySelector('.modal-title');
         const modalBody = document.querySelector('.modal-body');
         const readFullButton = document.querySelector('a.full-article');
