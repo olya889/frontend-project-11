@@ -23,7 +23,7 @@ export default (elements, i18n, state) => {
         feedsBody.classList.add('card', 'border-0');
         const feedsTitleDiv = document.createElement('div');
         const feedsTitle = document.createElement('h2');
-        feedsTitle.textContent = i18n.t('feedsTitle');
+        feedsTitle.textContent = i18n.t('responseSection.feedsTitle');
         feedsTitleDiv.classList.add('card-body');
         feedsTitle.classList.add('card-title', 'h4');
         feedsTitleDiv.append(feedsTitle);
@@ -46,7 +46,7 @@ export default (elements, i18n, state) => {
         });
         feedbackElement.classList.remove('text-danger');
         feedbackElement.classList.add('text-success');
-        feedbackElement.textContent = i18n.t('successFeedback');
+        feedbackElement.textContent = i18n.t('responseSection.successFeedback');
         break;
       }
 
@@ -56,7 +56,7 @@ export default (elements, i18n, state) => {
         postsBody.classList.add('card', 'border-0');
         const postsTitleDiv = document.createElement('div');
         const postsTitle = document.createElement('h2');
-        postsTitle.textContent = i18n.t('postsTitle');
+        postsTitle.textContent = i18n.t('responseSection.postsTitle');
         postsTitleDiv.classList.add('card-body');
         postsTitle.classList.add('card-title', 'h4');
         postsTitleDiv.append(postsTitle);
@@ -84,7 +84,7 @@ export default (elements, i18n, state) => {
           postButton.setAttribute('data-id', id);
           postButton.setAttribute('data-bs-toggle', 'modal');
           postButton.setAttribute('data-bs-target', '#modal');
-          postButton.textContent = i18n.t('openLinkButton');
+          postButton.textContent = i18n.t('responseSection.openLinkButton');
           postItem.append(postLink);
           postItem.append(postButton);
           postsUL.append(postItem);
