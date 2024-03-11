@@ -2,9 +2,8 @@ import onChange from 'on-change';
 
 export default (elements, i18n, state) => {
   const {
-    form, feedbackElement, postsContainer, feedsContainer, inputElement,
+    form, submitButton, feedbackElement, postsContainer, feedsContainer, inputElement,
   } = elements;
-  const submitButton = document.querySelector('button[type="submit"]');
   const watchedState = onChange(state, (path, value) => {
     const previewedPosts = state.uiState.posts.map((post) => post.id);
     switch (path) {
