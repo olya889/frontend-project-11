@@ -5,14 +5,24 @@ import uniqueId from 'lodash/uniqueId.js';
 import resources from './locales/index.js';
 import watch from './view.js';
 import parse from './parser.js';
+import init from './init.js';
 
 export default () => {
   const elements = {
     form: document.querySelector('form'),
+    formTitle: document.querySelector('h1'),
+    lead: document.querySelector('.lead'),
+    inputLabel: document.querySelector('label'),
+    submitButton: document.querySelector('button[type="submit"]'),
+    exampleElement: document.querySelector('p.text-muted'),
     feedbackElement: document.querySelector('p.feedback'),
     postsContainer: document.querySelector('div.posts'),
     feedsContainer: document.querySelector('div.feeds'),
     inputElement: document.querySelector('input'),
+    modalTitle: document.querySelector('.modal-title'),
+    modalBody: document.querySelector('.modal-body'),
+    readFullButton: document.querySelector('a.full-article'),
+    modalCloseButton: document.querySelector('button.btn-secondary'),
   };
 
   const state = {
@@ -86,13 +96,13 @@ export default () => {
       const watchedState = watch(elements, i18nextInstance, state);
       setLocale({
         string: {
-          url: () => ({ key: 'errors.url' }),
-          matches: () => ({ key: 'errors.matches' }),
+          url: () => ({ key: 'responseSection.errors.url' }),
+          matches: () => ({ key: 'responseSection.errors.matches' }),
         },
         mixed: {
-          notOneOf: () => ({ key: 'errors.notOneOf' }),
-          parsingError: () => ({ key: 'errors.hasNotRss' }),
-          networkError: () => ({ key: 'errors.networkError' }),
+          notOneOf: () => ({ key: 'responseSection.errors.notOneOf' }),
+          parsingError: () => ({ key: 'responseSection.errors.hasNotRss' }),
+          networkError: () => ({ key: 'responseSection.errors.networkError' }),
         },
       });
 
@@ -112,14 +122,11 @@ export default () => {
 
             elements.postsContainer.addEventListener('click', (event) => {
               if (event.target.tagName === 'A' || event.target.tagName === 'BUTTON') {
-                const modalTitle = document.querySelector('.modal-title');
-                const modalBody = document.querySelector('.modal-body');
-                const readFullButton = document.querySelector('a.full-article');
                 const targetID = event.target.getAttribute('data-id');
                 const targetPost = state.posts.find((post) => post.id === targetID);
-                modalTitle.textContent = targetPost.title;
-                modalBody.textContent = targetPost.description;
-                readFullButton.setAttribute('href', targetPost.link);
+                elements.modalTitle.textContent = targetPost.title;
+                elements.modalBody.textContent = targetPost.description;
+                elements.readFullButton.setAttribute('href', targetPost.link);
                 watchedState.uiState.posts.push({ id: targetID });
               }
             });
@@ -131,9 +138,10 @@ export default () => {
             if (err.name === 'ValidationError') {
               watchedState.error = err.message.key;
             } else {
-              watchedState.error = `errors.${err.name}`;
+              watchedState.error = `responseSection.errors.${err.name}`;
             }
           });
       });
     });
+  init(elements, i18nextInstance);
 };
