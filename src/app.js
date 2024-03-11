@@ -112,8 +112,10 @@ export default () => {
         const formData = new FormData(e.target);
         const rss = formData.get('url').trim();
         validateRss(rss, watchedState)
-          .then((validRss) => getUrlWithProxy(validRss))
-          .then((url) => axios.get(url))
+          .then((validRss) => {
+            const urlWithProxy = getUrlWithProxy(validRss);
+            return axios.get(urlWithProxy);
+          })
           .then((response) => {
             watchedState.formState = 'processing';
             const { feed, posts } = parse(rss, response);
