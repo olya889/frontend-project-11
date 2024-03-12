@@ -56,30 +56,18 @@ export default () => {
       const url = getUrlWithProxy(rss);
       axios.get(url)
         .then((response) => {
-          const parser = new DOMParser();
-          const xmlString = response.data.contents;
-          const responseData = parser.parseFromString(xmlString, 'text/xml');
-          const channel = responseData.querySelector('channel');
+          const { feed, posts } = parse(rss, response);
           const newPosts = [];
           const currentChannelPosts = watchedState.posts.filter((post) => post.feedId === id);
           const lastPubDate = currentChannelPosts[0].postPubDate;
-          channel.querySelectorAll('item').forEach((item) => {
-            const postTitle = (item.querySelector('title').textContent);
-            const postLink = item.querySelector('link').textContent;
-            const postDescription = item.querySelector('description').textContent;
-            const date = new Date(item.querySelector('pubDate').textContent);
-            if (date > lastPubDate) {
-              const post = {
-                id: uniqueId(),
-                feedId: feed.id,
-                title: postTitle,
-                link: postLink,
-                postPubDate: date,
-                description: postDescription,
-              };
-              newPosts.push(post);
+          posts.forEach((post) => {
+            if (post.postPubDate > lastPubDate) {
+              const item = post;
+              item.id = uniqueId();
+              item.feedId = id;
+              newPosts.push(item);
             }
-          });
+          })
           watchedState.posts.unshift(...newPosts);
         });
     });
