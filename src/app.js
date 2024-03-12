@@ -56,7 +56,7 @@ export default () => {
       const url = getUrlWithProxy(rss);
       axios.get(url)
         .then((response) => {
-          const { feed, posts } = parse(rss, response);
+          const { posts } = parse(rss, response);
           const newPosts = [];
           const currentChannelPosts = watchedState.posts.filter((post) => post.feedId === id);
           const lastPubDate = currentChannelPosts[0].postPubDate;
@@ -67,7 +67,7 @@ export default () => {
               item.feedId = id;
               newPosts.push(item);
             }
-          })
+          });
           watchedState.posts.unshift(...newPosts);
         });
     });
