@@ -119,7 +119,14 @@ export default () => {
           .then((response) => {
             watchedState.formState = 'processing';
             const { feed, posts } = parse(rss, response);
+            const feedId = uniqueId();
+            feed.id = feedId;
             watchedState.feeds.unshift(feed);
+            posts.forEach((post) => {
+              const item = post;
+              item.id = uniqueId();
+              item.feedId = feedId;
+            });
             watchedState.posts.unshift(...posts);
 
             elements.postsContainer.addEventListener('click', (event) => {

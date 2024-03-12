@@ -1,5 +1,3 @@
-import uniqueId from 'lodash/uniqueId.js';
-
 export default (rss, response) => {
   const posts = [];
   const parser = new DOMParser();
@@ -14,10 +12,8 @@ export default (rss, response) => {
   const channel = responseData.querySelector('channel');
   const channelTitle = channel.querySelector('title').textContent;
   const channelDescription = channel.querySelector('description').textContent;
-  const id = uniqueId();
   const feed = {
     rss,
-    id,
     title: channelTitle,
     description: channelDescription,
   };
@@ -28,8 +24,6 @@ export default (rss, response) => {
     const postLink = item.querySelector('link').textContent;
     const postDescription = item.querySelector('description').textContent;
     const post = {
-      id: uniqueId(),
-      feedId: id,
       title: postTitle,
       link: postLink,
       postPubDate,
