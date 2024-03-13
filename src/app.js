@@ -30,7 +30,7 @@ export default () => {
     posts: [],
     error: '',
     uiState: {
-      posts: [],
+      posts: new Set(),
     },
     formState: 'initial',
   };
@@ -124,7 +124,7 @@ export default () => {
                 elements.modalTitle.textContent = targetPost.title;
                 elements.modalBody.textContent = targetPost.description;
                 elements.readFullButton.setAttribute('href', targetPost.link);
-                watchedState.uiState.posts.push({ id: targetID });
+                watchedState.uiState.posts.add(targetID);
               }
             });
             checkNewPosts(watchedState);

@@ -5,7 +5,6 @@ export default (elements, i18n, state) => {
     form, submitButton, feedbackElement, postsContainer, feedsContainer, inputElement,
   } = elements;
   const watchedState = onChange(state, (path, value) => {
-    const previewedPosts = state.uiState.posts.map((post) => post.id);
     switch (path) {
       case 'error':
         feedbackElement.textContent = i18n.t(value);
@@ -63,6 +62,8 @@ export default (elements, i18n, state) => {
         postsUL.classList.add('list-group', 'border-0', 'rounded-0');
         postsBody.append(postsTitleDiv, postsUL);
         postsContainer.append(postsBody);
+        const previewedPosts = [];
+        state.uiState.posts.forEach((id) => previewedPosts.push(id));
         value.forEach((element) => {
           const { id, title, link } = element;
           const postItem = document.createElement('li');
@@ -92,7 +93,7 @@ export default (elements, i18n, state) => {
       }
 
       case 'uiState.posts': {
-        value.forEach(({ id }) => {
+        value.forEach((id) => {
           const postElement = document.querySelector(`a[data-id="${id}"]`);
           postElement.classList.add('fw-normal');
           postElement.classList.remove('fw-bold');
