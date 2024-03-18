@@ -116,17 +116,6 @@ export default () => {
               item.feedId = feedId;
             });
             watchedState.posts.unshift(...posts);
-
-            elements.postsContainer.addEventListener('click', (event) => {
-              if (event.target.tagName === 'A' || event.target.tagName === 'BUTTON') {
-                const targetID = event.target.getAttribute('data-id');
-                const targetPost = state.posts.find((post) => post.id === targetID);
-                elements.modalTitle.textContent = targetPost.title;
-                elements.modalBody.textContent = targetPost.description;
-                elements.readFullButton.setAttribute('href', targetPost.link);
-                watchedState.uiState.posts.add(targetID);
-              }
-            });
             checkNewPosts(watchedState);
           })
           .catch((err) => {
@@ -138,6 +127,16 @@ export default () => {
               watchedState.error = `responseSection.errors.${err.name}`;
             }
           });
+      });
+      elements.postsContainer.addEventListener('click', (event) => {
+        if (event.target.tagName === 'A' || event.target.tagName === 'BUTTON') {
+          const targetID = event.target.getAttribute('data-id');
+          const targetPost = state.posts.find((post) => post.id === targetID);
+          elements.modalTitle.textContent = targetPost.title;
+          elements.modalBody.textContent = targetPost.description;
+          elements.readFullButton.setAttribute('href', targetPost.link);
+          watchedState.uiState.posts.add(targetID);
+        }
       });
     });
   init(elements, i18nextInstance);
